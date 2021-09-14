@@ -26,7 +26,7 @@ export class Game {
         this.buttonPlay = null; 
         //props     
         this.isLoadingGame = true;
-        this.targetWin = false;
+        this.isWinGame = true;
         this.timeLoadingGame = gameProperty.TIME_SCENE_PRELOAD;
         this.timeWinGame = gameProperty.TIME_SCENE_WIN;
         
@@ -71,13 +71,15 @@ export class Game {
 
         //initialize win scene
         this.winScene = new WinScenes();
-        const winSceneContainer = this.winScene.getWinSceneContainer();   
-        this.winScene.hiddenWinScene();
+        const winSceneContainer = this.winScene.getSceneContainer();   
+        this.winScene.hiddenScene();
 
         //initialize preloadScene
         this.preloadScene = new PreloadScene();
         const preloadSceneContainer = this.preloadScene.getPreloadSceneContainer();
         this.preloadScene.visiblePreloadingScene();
+
+        this.gameScene.hiddenGameScene();
       
         app.stage.addChild(gameSceneContainer);
         app.stage.addChild(winSceneContainer);
@@ -105,6 +107,15 @@ export class Game {
         }
     }
 
+
+     //game event Win
+     eventWinGame() {
+        if (this.isWinGame) {
+            this.gameScene.hiddenGameScene();
+            this.winScene.visibleScene();
+        }
+    }
+
     //Button Play handler
     handlerClickPlay() {
             window.location = gameProperty.REDIRECT_URL;
@@ -116,6 +127,7 @@ export class Game {
 
     update() {
         this.eventPreloadingGame();
+        this.eventWinGame();
     } 
 }
 
