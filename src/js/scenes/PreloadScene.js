@@ -134,4 +134,5 @@ export default class PreloadScene {
     handlerClickPlay() {
         window.location = gameProperty.REDIRECT_URL;
     }
+
 }

@@ -1,8 +1,8 @@
 // import { GlowFilter } from 'pixi-filters';
-import soundPlay from '../assets/sound/runPlay.mp3';
-import soundsWin from '../assets/sound/won.mp3';
+import * as PIXI from 'pixi.js';
+
 import soundsClick from '../assets/sound/click.mp3';
-import soundBg from '../assets/sound/Sound_fon.mp3';
+import soundBg from '../assets/sound/sound_bg.mp3';
 
 import Loader from '../utils/loader.js';
 
@@ -26,15 +26,13 @@ export class Game {
         this.buttonPlay = null; 
         //props     
         this.isLoadingGame = true;
-        this.isWinGame = true;
+        this.isWinGame = false;
         this.timeLoadingGame = gameProperty.TIME_SCENE_PRELOAD;
-        this.timeWinGame = gameProperty.TIME_SCENE_WIN;
-        
+        this.timeStartWinSceneAnim = gameProperty.WIN_SCENE_START_ANIM;
+        this.triggerStartAnim = false;
         this.state = null;
         //sound
-        this.soundWin = new Audio(soundsWin);
         this.soundClick = new Audio(soundsClick);
-        this.soundPlay = new Audio(soundPlay);
         this.soundBg = new Audio(soundBg);
 
         this.load();
@@ -80,11 +78,11 @@ export class Game {
         this.preloadScene.visiblePreloadingScene();
 
         this.gameScene.hiddenGameScene();
-      
+
         app.stage.addChild(gameSceneContainer);
         app.stage.addChild(winSceneContainer);
         app.stage.addChild(preloadSceneContainer);
-
+      
         this.soundBg.play();
         this.soundBg.loop = true;
 
@@ -107,18 +105,29 @@ export class Game {
         }
     }
 
-
      //game event Win
      eventWinGame() {
         if (this.isWinGame) {
             this.gameScene.hiddenGameScene();
             this.winScene.visibleScene();
+            this.timeStartWinSceneAnim -=1;
+
+            if(this.timeStartWinSceneAnim == 0){
+                this.triggerStartAnim = true;
+            }
+
+            if(this.triggerStartAnim){
+                this.winScene.animateButtonPlay();
+            }
         }
     }
-
+    handlerClick(){
+        this.soundClick.play();
+    }
     //Button Play handler
     handlerClickPlay() {
-            window.location = gameProperty.REDIRECT_URL;
+            //window.location = gameProperty.REDIRECT_URL;
+            this.isWinGame = true;
     }
    
     gameLoop(delta) {
@@ -127,7 +136,7 @@ export class Game {
 
     update() {
         this.eventPreloadingGame();
-        this.eventWinGame();
+        this.eventWinGame();       
     } 
 }
 

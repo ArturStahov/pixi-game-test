@@ -8,15 +8,12 @@ import { gameProperty } from "../gameProperty.js"
 export default class WinScene {
     constructor() {
         this.sceneRootContainer = null;
-        this.sceneContainerStep1 = null;
-        this.sceneContainerStep2 = null;
-
-        
+        this.sceneElementsContainer = null;
+        this.buttonPlayContainer = null;  
+        this.AnimFlag = true;
+        this.animScale = 1000;
         this._preloadScene();
-
-        this._preloadScene_Step1();
-        //this._preloadScene_Step2();
-        //this.sceneContainerStep2.visible=false;
+        this._preloadScene_Elements();
     }
 
     _preloadScene(){
@@ -42,11 +39,12 @@ export default class WinScene {
         this.sceneRootContainer.addChild(Overlay);
         //add ButtonPlay
         const buttonPlay = new ButtonPlay();
-        const buttonPlayContainer = buttonPlay.getButtonPlayContainer();
-        buttonPlayContainer.x=(app.screen.width / 2)-(buttonPlayContainer.width / 2);
-        buttonPlayContainer.y=app.screen.height - 150;
-        buttonPlayContainer.on('pointerdown', this.handlerClickPlay.bind(this));
-        this.sceneRootContainer.addChild(buttonPlayContainer);
+        this.buttonPlayContainer = buttonPlay.getButtonPlayContainer();
+        this.buttonPlayContainer.x=(app.screen.width / 2)-(this.buttonPlayContainer.width / 2);
+        this.buttonPlayContainer.y=app.screen.height - 150;
+        this.buttonPlayContainer.on('pointerdown', this.handlerClickPlay.bind(this));
+
+        this.sceneRootContainer.addChild(this.buttonPlayContainer);
     }
 
     _textStyle(){
@@ -91,8 +89,8 @@ export default class WinScene {
         return style;
     }
 
-    _preloadScene_Step1() {
-        this.sceneContainerStep1 = new PIXI.Container();
+    _preloadScene_Elements() {
+        this.sceneElementsContainer = new PIXI.Container();
         const style=this._textStyle();
 
         const styleYellow=this._textStyleYellow();
@@ -100,43 +98,29 @@ export default class WinScene {
         const girlTexture =TextureCache["char.png"];
         const girlSprite = new PIXI.Sprite(girlTexture);
         girlSprite.anchor.set(0.5);
-        girlSprite.position.set(girlSprite.width /2 -girlSprite.width /8, app.screen.height / 2);
-        this.sceneContainerStep1.addChild(girlSprite);
+        girlSprite.position.set(girlSprite.width / 2 - girlSprite.width / 8, app.screen.height - girlSprite.height / 2 );
+        this.sceneElementsContainer.addChild(girlSprite);
 
         const textLine = new PIXI.Text('Can you solve every mystery?', style);
-        textLine.x = (app.screen.width / 2)-(textLine.width/2);
-        textLine.y = (app.screen.height / 2)+10;
-        this.sceneContainerStep1.addChild(textLine);
+        textLine.x = (app.screen.width / 2) - (textLine.width/2);
+        textLine.y = (app.screen.height / 2) + 10;
+        this.sceneElementsContainer.addChild(textLine);
 
         const textLineHeader = new PIXI.Text('Great Job', styleYellow);
-        textLineHeader.x = (app.screen.width / 2)-(textLineHeader.width/2);
-        textLineHeader.y = (app.screen.height / 2)-(textLineHeader.height/2) -50;
-        this.sceneContainerStep1.addChild(textLineHeader);
+        textLineHeader.x = (app.screen.width / 2) - (textLineHeader.width / 2);
+        textLineHeader.y = (app.screen.height / 2) - (textLineHeader.height / 2) -50;
+        this.sceneElementsContainer.addChild(textLineHeader);
 
-        this.sceneRootContainer.addChild(this.sceneContainerStep1);
+        const logoTexture =TextureCache["logo.png"];
+        const logoSprite = new PIXI.Sprite(logoTexture);
+        logoSprite.anchor.set(0.5);
+        logoSprite.position.set(app.screen.width / 2, app.screen.height / 2 - logoSprite.height / 2 - 75 );
+        this.sceneElementsContainer.addChild(logoSprite);
+
+        this.sceneRootContainer.addChild(this.sceneElementsContainer);
     }
 
-    // _preloadScene_Step2() {
-    //     this.sceneContainerStep2 = new PIXI.Container();
-    //     const SpinnerLoading = new PIXI.Text("...Loading!", {
-    //         fontFamily: "Arial",
-    //         fontSize: 24,
-    //         fill: "white",
-    //         stroke: '#ff3300',
-    //         strokeThickness: 4,
-    //         dropShadow: true,
-    //         dropShadowColor: "#000000",
-    //         dropShadowBlur: 4,
-    //         dropShadowAngle: Math.PI / 6,
-    //         dropShadowDistance: 6,
-    //     });
-    //     SpinnerLoading.anchor.set(0.5);
-    //     SpinnerLoading.position.set(app.screen.width / 2, app.screen.height / 2);
-
-    //     this.sceneContainerStep2.addChild(SpinnerLoading);
-    //     this.sceneRootContainer.addChild(this.sceneContainerStep2);
-    // }
-
+    
     getSceneContainer() {
         return this.sceneRootContainer;
     }
@@ -151,5 +135,23 @@ export default class WinScene {
 
     handlerClickPlay() {
         window.location = gameProperty.REDIRECT_URL;
+    }
+
+    animateButtonPlay(){    
+            if(!this.AnimFlag){
+                if(this.animScale == 1000){
+                    this.AnimFlag = true;
+                }
+                this.animScale -= 1;
+            }
+    
+            if(this.AnimFlag){
+                if(this.animScale == 1100){
+                    this.AnimFlag = false;
+                }
+                this.animScale += 1;
+            }
+           
+            this.buttonPlayContainer.scale.set(this.animScale / 1000);
     }
 }

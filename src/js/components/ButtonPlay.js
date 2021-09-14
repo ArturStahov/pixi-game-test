@@ -21,7 +21,7 @@ export default class ButtonPlay {
         });
         this.ButtonText.anchor.set(0.5);
         this.ButtonText.position.set(this.buttonContainer.width / 2, this.buttonContainer.height / 2);
-        this.buttonContainer.addChild(this.ButtonText)
+        this.buttonContainer.addChild(this.ButtonText);
     }
     getButtonPlayContainer() {
         return this.buttonContainer;
