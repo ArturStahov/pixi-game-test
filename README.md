@@ -6,4 +6,4 @@ use:
 - pixi.js;
 
 
-view : https://arturstahov.github.io/ArturStahov/pixi-game-test/index.html
+view :https://arturstahov.github.io/pixi-game-test/
