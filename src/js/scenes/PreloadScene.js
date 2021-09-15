@@ -3,21 +3,21 @@ import app from '../appConfig.js'
 const TextureCache = PIXI.utils.TextureCache;
 
 import ButtonPlay from '../components/ButtonPlay.js';
-import { gameProperty } from "../gameProperty.js"
+import gameProperty from "../gameProperty.js"
 
 export default class PreloadScene {
     constructor() {
         this.preloadSceneContainer = null;
         this.sceneContainerStep1 = null;
-        this.sceneContainerStep2 = null;
+       
         this.dogSprite=null;
         this.textLine1=null;
         this.textLine2=null;
         this._preloadScene();
 
         this._preloadScene_Step1();
-        this._preloadScene_Step2();
-        this.sceneContainerStep2.visible=false;
+       
+        
     }
 
     _preloadScene(){
@@ -64,8 +64,6 @@ export default class PreloadScene {
             dropShadowBlur: 4,
             dropShadowAngle: Math.PI / 6,
             dropShadowDistance: 6,
-            // wordWrap: true,
-            // wordWrapWidth: 330,
             lineJoin: 'round',
         });
 
@@ -98,27 +96,7 @@ export default class PreloadScene {
         this.preloadSceneContainer.addChild(this.sceneContainerStep1);
     }
 
-    _preloadScene_Step2() {
-        this.sceneContainerStep2 = new PIXI.Container();
-        const SpinnerLoading = new PIXI.Text("...Loading!", {
-            fontFamily: "Arial",
-            fontSize: 24,
-            fill: "white",
-            stroke: '#ff3300',
-            strokeThickness: 4,
-            dropShadow: true,
-            dropShadowColor: "#000000",
-            dropShadowBlur: 4,
-            dropShadowAngle: Math.PI / 6,
-            dropShadowDistance: 6,
-        });
-        SpinnerLoading.anchor.set(0.5);
-        SpinnerLoading.position.set(app.screen.width / 2, app.screen.height / 2);
-
-        this.sceneContainerStep2.addChild(SpinnerLoading);
-        this.preloadSceneContainer.addChild(this.sceneContainerStep2);
-    }
-
+    
     getPreloadSceneContainer() {
         return this.preloadSceneContainer;
     }

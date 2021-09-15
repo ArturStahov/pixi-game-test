@@ -1,20 +1,12 @@
-// import { GlowFilter } from 'pixi-filters';
-import * as PIXI from 'pixi.js';
-
 import soundsClick from '../assets/sound/click.mp3';
 import soundBg from '../assets/sound/sound_bg.mp3';
-
 import Loader from '../utils/loader.js';
-
 import ButtonPlay from './components/ButtonPlay.js';
 import GameScene from './scenes/GameScene.js';
 import WinScenes from './scenes/WinScene.js';
 import PreloadScene from './scenes/PreloadScene.js';
 import app from './appConfig.js'
-import { gameProperty } from "./gameProperty.js";
-
-// const filterGlow = new GlowFilter({ innerStrength: 3, outerStrength: 10, color: 0xffffff });
-
+import  gameProperty  from "./gameProperty.js";
 
 export class Game {
     constructor() {
@@ -27,9 +19,12 @@ export class Game {
         //props     
         this.isLoadingGame = true;
         this.isWinGame = false;
+        this.winCount = 0;
         this.timeLoadingGame = gameProperty.TIME_SCENE_PRELOAD;
         this.timeStartWinSceneAnim = gameProperty.WIN_SCENE_START_ANIM;
+        this.timeWinSceneView = gameProperty.WIN_SCENE_VIEW_TIME;
         this.triggerStartAnim = false;
+        this.triggerStartWin = false;
         this.state = null;
         //sound
         this.soundClick = new Audio(soundsClick);
@@ -58,6 +53,7 @@ export class Game {
         //initialize game scene
         this.gameScene = new GameScene();
         const gameSceneContainer = this.gameScene.getGameSceneContainer();
+        this.gameScene.generateGameArea();
         
         //initialize button Play
         this.buttonPlay = new ButtonPlay();
@@ -79,6 +75,15 @@ export class Game {
 
         this.gameScene.hiddenGameScene();
 
+        //add event on items
+        const arrayGameItems=this.gameScene.getGameItems();
+        arrayGameItems.forEach(item =>{
+            item.container.interactive = true;
+            item.container.buttonMode = true;
+            item.container.on('pointerdown', this.eventClickedItem.bind(this));
+            item.container.refItem=item;
+        });
+ 
         app.stage.addChild(gameSceneContainer);
         app.stage.addChild(winSceneContainer);
         app.stage.addChild(preloadSceneContainer);
@@ -90,7 +95,22 @@ export class Game {
         app.ticker.add(delta => this.gameLoop(delta));
     }
 
-    //game event preloading event
+    eventClickedItem(event) {
+       const item = event.currentTarget;
+
+       if(!item.refItem.isCheck) {
+        item.refItem.animate();     
+        this.soundClick.play();
+        this.winCount += 1;
+        item.refItem.isCheck = true;
+       }
+
+       if(this.winCount == gameProperty.WIN_COUNT) {
+         this.isWinGame = true;
+       }
+    }
+
+    //game event preloading 
     eventPreloadingGame() {
         if (this.isLoadingGame) {
             this.timeLoadingGame -= 1;
@@ -108,9 +128,17 @@ export class Game {
      //game event Win
      eventWinGame() {
         if (this.isWinGame) {
-            this.gameScene.hiddenGameScene();
-            this.winScene.visibleScene();
-            this.timeStartWinSceneAnim -=1;
+            if(!this.triggerStartWin){
+                this.timeWinSceneView -= 1;
+            }
+
+            if(this.timeWinSceneView == 0){
+                this.gameScene.hiddenGameScene();
+                this.winScene.visibleScene();
+                this.triggerStartWin = true;
+            }
+            
+            this.timeStartWinSceneAnim -= 1;
 
             if(this.timeStartWinSceneAnim == 0){
                 this.triggerStartAnim = true;
@@ -126,8 +154,7 @@ export class Game {
     }
     //Button Play handler
     handlerClickPlay() {
-            //window.location = gameProperty.REDIRECT_URL;
-            this.isWinGame = true;
+        window.location = gameProperty.REDIRECT_URL;
     }
    
     gameLoop(delta) {

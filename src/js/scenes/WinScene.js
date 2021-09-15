@@ -1,9 +1,10 @@
 import * as PIXI from 'pixi.js';
 import app from '../appConfig.js'
+import ButtonPlay from '../components/ButtonPlay.js';
+import  gameProperty  from "../gameProperty.js"
+
 const TextureCache = PIXI.utils.TextureCache;
 
-import ButtonPlay from '../components/ButtonPlay.js';
-import { gameProperty } from "../gameProperty.js"
 
 export default class WinScene {
     constructor() {
@@ -40,6 +41,7 @@ export default class WinScene {
         //add ButtonPlay
         const buttonPlay = new ButtonPlay();
         this.buttonPlayContainer = buttonPlay.getButtonPlayContainer();
+
         this.buttonPlayContainer.x=(app.screen.width / 2)-(this.buttonPlayContainer.width / 2);
         this.buttonPlayContainer.y=app.screen.height - 150;
         this.buttonPlayContainer.on('pointerdown', this.handlerClickPlay.bind(this));
